@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FireWall : MonoBehaviour {
+public class FireWall : MonoBehaviour
+{
 
     [SerializeField, Tooltip("火の本体,")]
     GameObject _fire = null;
@@ -13,41 +14,40 @@ public class FireWall : MonoBehaviour {
     [SerializeField, Range(1f, 10f), Tooltip("何秒間火を消すかの最大時間")]
     float _maxWaitTimeOfReturn = 1f;
     // 火が消えている時間
-    private float _waitTimeOfReturn = 0f;
+    private float _waitTimeOfReturn = 0.0f;
 
     void Start()
     {
-        _touthCount = _maxTouthCount;
-        _waitTimeOfReturn = _maxWaitTimeOfReturn;
+
     }
 
-    void Update()
+    void FixedUpdate()
     {
         DeleteFire();
         CountWaitTimeOfReturn();
     }
     private void CountWaitTimeOfReturn()
     {
-        if (!_fire.activeInHierarchy)
-            _waitTimeOfReturn -= Time.deltaTime;
+        if (_fire.activeInHierarchy) return;
+        _waitTimeOfReturn += Time.deltaTime;
 
-        if (_waitTimeOfReturn <= 0)
-            ReBorn();
+        if (_waitTimeOfReturn < _maxWaitTimeOfReturn) return;
+        ReBorn();
     }
 
     private void ReBorn()
     {
         _fire.SetActive(true);
-        _touthCount = _maxTouthCount;
-        _waitTimeOfReturn = _maxWaitTimeOfReturn;
+        _touthCount = 0;
+        _waitTimeOfReturn = 0.0f;
     }
-
-
 
     private void DeleteFire()
     {
-        _touthCount--;
-        if (_touthCount <= 0)
-            _fire.SetActive(false);
+        if (!_fire.activeInHierarchy) return;
+        ++_touthCount;
+
+        if (_touthCount > 0) return;
+        _fire.SetActive(false);
     }
 }
