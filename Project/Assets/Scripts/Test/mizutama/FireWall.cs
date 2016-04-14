@@ -21,9 +21,26 @@ public class FireWall : MonoBehaviour
 
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        DeleteFire();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit = new RaycastHit();
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                string selectedGameObjectname =
+                 hit.collider.gameObject.name;
+                Debug.Log("name=" + selectedGameObjectname);
+
+                if (selectedGameObjectname != transform.name) return;
+                DeleteFire();
+
+            }
+        }
+        
         CountWaitTimeOfReturn();
     }
     private void CountWaitTimeOfReturn()
@@ -47,7 +64,7 @@ public class FireWall : MonoBehaviour
         if (!_fire.activeInHierarchy) return;
         ++_touthCount;
 
-        if (_touthCount > 0) return;
+        if (_touthCount < _maxTouthCount) return;
         _fire.SetActive(false);
     }
 }
