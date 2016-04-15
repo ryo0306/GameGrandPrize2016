@@ -31,7 +31,6 @@ public class FireWall : MonoBehaviour
             if (hit.collider.gameObject.name != transform.name) return;
             DeleteFire();
         }
-        
         CountWaitTimeOfReturn();
     }
 
