@@ -9,17 +9,16 @@ public class FireWall : MonoBehaviour
 
     [SerializeField, Range(1, 5), Tooltip("何回でで火が消えるか")]
     int _maxTouthCount = 1;
+
+    // 何回叩いたか
     private int _touthCount = 0;
 
     [SerializeField, Range(1f, 10f), Tooltip("何秒間火を消すかの最大時間")]
     float _maxWaitTimeOfReturn = 1f;
+
     // 火が消えている時間
     private float _waitTimeOfReturn = 0.0f;
 
-    void Start()
-    {
-
-    }
 
     void Update()
     {
@@ -43,6 +42,8 @@ public class FireWall : MonoBehaviour
         
         CountWaitTimeOfReturn();
     }
+
+    //復活する時間を測る
     private void CountWaitTimeOfReturn()
     {
         if (_fire.activeInHierarchy) return;
@@ -52,6 +53,7 @@ public class FireWall : MonoBehaviour
         ReBorn();
     }
 
+    //復活
     private void ReBorn()
     {
         _fire.SetActive(true);
@@ -59,6 +61,8 @@ public class FireWall : MonoBehaviour
         _waitTimeOfReturn = 0.0f;
     }
 
+
+    //何回かタッチしたら消える
     private void DeleteFire()
     {
         if (!_fire.activeInHierarchy) return;
