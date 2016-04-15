@@ -8,7 +8,7 @@ public class HitRayCast : MonoBehaviour
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit = new RaycastHit();
-
+        
         if (!Physics.Raycast(ray, out hit)) return false;
 
         if (hit.collider.gameObject.name != hitObjectName_) return false;

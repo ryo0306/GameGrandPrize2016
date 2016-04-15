@@ -25,7 +25,10 @@ public class FireWall : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (!FindObjectOfType<HitRayCast>().HitRay(_fire.transform.name)) return;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit = new RaycastHit();
+            if (!Physics.Raycast(ray, out hit)) return;
+            if (hit.collider.gameObject.name != transform.name) return;
             DeleteFire();
         }
         
