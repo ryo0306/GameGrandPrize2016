@@ -18,8 +18,19 @@ public class LineWriter : MonoBehaviour
         this.transform.position = player.transform.position;
     }
 
-    //ドラッグしたらマーカーが移動する
+    //クリックされているときその位置にマーカーが移動する
+    void Update()
+    {
+            this.transform.position = GetMousePointInWorld();
+    }
+
+/*    //ドラッグしたらマーカーが移動する
     void OnMouseDrag()
+    {
+        this.transform.position = GetMousePointInWorld();
+    }
+*/
+    Vector3 GetMousePointInWorld()
     {
         Vector3 objectPointInScreen
             = Camera.main.WorldToScreenPoint(this.transform.position);
@@ -31,6 +42,6 @@ public class LineWriter : MonoBehaviour
 
         Vector3 mousePointInWorld = Camera.main.ScreenToWorldPoint(mousePointInScreen);
         mousePointInWorld.z = this.transform.position.z;
-        this.transform.position = mousePointInWorld;
+        return mousePointInWorld;
     }
 }
