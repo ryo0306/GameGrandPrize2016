@@ -21,6 +21,7 @@ public class WindMill : MonoBehaviour {
 	
 	void Update () {
 
+        //あたり判定（レイキャスト）
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

@@ -9,14 +9,8 @@ public class MovePropeller : MonoBehaviour
     [SerializeField, Range(0.0f, 3.0f), Tooltip("回転の最低速度")]
     float _minRotateSpeed = 0.0f;
 
-    //回転速度
-    private float _rotateSpeed = 0.0f;
-
-    [SerializeField, Range(0.0f, 10.0f), Tooltip("何秒で復活するか,")]
-    float _maxWaitTimeOfReturn = 1.0f;
-
-    //復活する時間
-    private float _waitTimeOfReturn = 0.0f;
+   
+    private float _rotateSpeed = 0.0f;          //回転速度
 
     [SerializeField, Range(0.0f, 10.0f), Tooltip("何秒ごとに加速するか")]
     float _maxWaitTimeOfAcceleration = 0.0f;
@@ -26,8 +20,8 @@ public class MovePropeller : MonoBehaviour
     [SerializeField, Range(1, 10), Tooltip("何回タッチしたら最低速度になるか,")]
     int _maxtouthCount = 1;
 
-    //タッチの回数
-    private int _touthCount = 0;
+    
+    private int _touthCount = 0;               //タッチの回数
 
 
     void Start()
@@ -37,6 +31,8 @@ public class MovePropeller : MonoBehaviour
 
     void FixedUpdate()
     {
+
+        //あたり判定（レイキャスト）
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -50,7 +46,7 @@ public class MovePropeller : MonoBehaviour
 
     }
 
-
+    //一定時間たったら加速する処理
     private void CountAccelerationTime()
     {
         _waitTimeOfAcceleration += Time.deltaTime;
@@ -75,6 +71,5 @@ public class MovePropeller : MonoBehaviour
         if (_touthCount >= _maxtouthCount) return;
         ++_touthCount;
         _rotateSpeed -= (_maxRotateSpeed - _minRotateSpeed) / _maxtouthCount;
-
     }
 }
