@@ -21,7 +21,7 @@ public class LineWriter : MonoBehaviour
     //クリックされているときその位置にマーカーが移動する
     void Update()
     {
-            this.transform.position = GetMousePointInWorld();
+        this.transform.position = GetMousePointInWorld();
     }
 
 /*    //ドラッグしたらマーカーが移動する

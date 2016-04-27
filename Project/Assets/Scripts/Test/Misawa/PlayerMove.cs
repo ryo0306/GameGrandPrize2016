@@ -17,46 +17,58 @@ public class PlayerMove : MonoBehaviour
     [SerializeField, Range(1, 10), Tooltip("ノードを置く間隔")]
     private int _nodeSetTiming = 1;
 
-    [SerializeField, Range(1.0f, 5.0f), Tooltip("移動速度")]
-    private float _speed = 1;
+    [SerializeField, Range(0.1f, 5.0f), Tooltip("移動速度")]
+    private float _speed = 0.5f;
+
+    [SerializeField,Tooltip("登録されたオブジェクトより右に行くとゴール")]
+    private GameObject _goalLine = null;
 
     //まだ到達していないノードのlist
     private List<Vector3> _nodePosition = new List<Vector3>();
     
-    private int _UpdateCount = 0;
+    private int _updateCount = 0;
+
+    //復帰地点を保存
+    private Vector3 _respawnPosition = Vector3.zero;
 
     //到達していないノードの数
     private int _listLength = 0;
 
     //一つ前のノードの位置
-    private Vector3 _startPosition;
+    private Vector3 _startPosition = Vector3.zero;
 
     //移動先のノードの位置
-    private Vector3 _targetPosition;
+    private Vector3 _targetPosition = Vector3.zero;
 
     //移動先のノードがセットされているか
-    bool _isSetTarget = false;
+    private bool _isSetTarget = false;
 
-    float rate = 0;
-    
+    private float _rate = 0;
+
+    //ゴールしているか
+    private bool _isGoal = false;
+
     //最初のノードの位置をプレイヤーの初期位置に設定する
     void Start()
     {
-        _startPosition = transform.position;
+        _respawnPosition = transform.position;
+        _startPosition = _respawnPosition;
     }
-    
+
     void FixedUpdate()
     {
-        _UpdateCount++;
+        _updateCount++;
 
         //今のリストの長さを調べる
         _listLength = _nodePosition.Count;
-
         
-        if (_UpdateCount == _nodeSetTiming)
+
+        if (_updateCount == _nodeSetTiming)
         {
             if (Input.GetMouseButton(0))
             {
+               // Debug.Log(_marker.transform.position);
+                
                 //今のマーカーの位置にノードを配置
                 _nodePosition.Add(_marker.transform.position);
                 
@@ -64,10 +76,9 @@ public class PlayerMove : MonoBehaviour
                 Instantiate(_node, _nodePosition[_listLength], Quaternion.identity);
             }
 
-            _UpdateCount = 0;
+            _updateCount = 0;
         }
-
-
+        
 
         if (_isSetTarget)
         {
@@ -76,15 +87,14 @@ public class PlayerMove : MonoBehaviour
             //前のノードとプレイヤーの距離
             float diff = Vector3.Distance(gameObject.transform.position, _startPosition);
 
-            rate = (diff + _speed / 10) / dis;
+            _rate = (diff + _speed / 10) / dis;
 
-            transform.position = Vector3.Lerp(_startPosition, _targetPosition, rate);
+            transform.position = Vector3.Lerp(_startPosition, _targetPosition, _rate);
         }
         else
         {
             transform.position += new Vector3(_speed / 10f, -0.05f, 0);
         }
-
 
 
         if (_listLength >= 1)
@@ -97,7 +107,7 @@ public class PlayerMove : MonoBehaviour
                 SetTarget();
             }
 
-            if (rate > 1)
+            if (_rate > 1)
             {
                 //移動前の位置を記憶
                 _startPosition = transform.position;
@@ -125,6 +135,18 @@ public class PlayerMove : MonoBehaviour
                 else _isSetTarget = false;
             }
         }
+
+        //ゴールオブジェクトより奥に行っていたらフラグをtrue
+        if(_goalLine.transform.position.x < transform.position.x)
+        {
+            _isGoal = true;
+        }
+
+        //DEBUG:ゴールしていたらコンソールに文字表示
+        if (_isGoal)
+        {
+            Debug.Log("GOAL");
+        }
     }
 
     float CalcAngle()
@@ -133,6 +155,7 @@ public class PlayerMove : MonoBehaviour
         float dy = _nodePosition[0].y - this.transform.position.y;
         return Mathf.Abs(Mathf.Atan2(dy, dx) / Mathf.PI);
     }
+
     void SetTarget()
     {
         float dis = Vector3.Distance(this.transform.position, _nodePosition[0]);
@@ -143,11 +166,35 @@ public class PlayerMove : MonoBehaviour
             //移動先の位置を記憶
             _targetPosition = _nodePosition[0];
 
-            rate = 0;
+            _rate = 0;
 
             _isSetTarget = true;
         }
+        //Debug.Log(CalcAngle() +"," +dis);
+    }
 
-        Debug.Log(CalcAngle() +"," +dis);
+    void OnTriggerEnter(Collider col)
+    {
+        //ぶつかったオブジェクトがチェックポイントだったらリスポーン場所を更新
+        if (col.gameObject.tag == "CheckPoint")
+        {
+            _respawnPosition = col.transform.position;
+        }
+        //チェックポイント以外のとき
+        else
+        {
+            //今登録されているノードをリセット
+            while (_nodePosition.Count > 0)
+            {
+                _nodePosition.RemoveAt(0);
+            }
+
+            _rate = 0;
+
+            _isSetTarget = false;
+
+            //リスポーン地点に移動
+            transform.position = _respawnPosition;
+        }
     }
 }
