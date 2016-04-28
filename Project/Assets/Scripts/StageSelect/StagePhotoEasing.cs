@@ -10,16 +10,18 @@ using System.Collections;
         [SerializeField, Tooltip("右端の最大")]
         public float _rightMax;
 
+
+        //Easing処理用の時間
         float _animationTime;
-
+        //スライドする距離
         public float _range;
-
+        //現在slideしているかどうか
         public bool _slide;
-
+        //スライドする方向
         private float _direction;
-
+        
+        //スライド時の最初の位置
         private float _startPos;
-        private readonly object tranceform;
 
         void Start()
         {
@@ -43,7 +45,6 @@ using System.Collections;
                     _startPos = transform.localPosition.x;
                     _slide = false;
                 }
-            Debug.Log(transform.localPosition.x);
             }
 
         }
