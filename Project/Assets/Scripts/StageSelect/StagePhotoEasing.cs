@@ -34,7 +34,7 @@ using System.Collections;
 
             if (_slide)
             {
-                _animationTime += 0.01f;
+                _animationTime += 0.01f * Time.deltaTime * 100;
 
                 transform.localPosition = new Vector3(EasingCircInOut(_animationTime, _startPos, _startPos + _range * _direction), transform.localPosition.y, transform.localPosition.z);
 

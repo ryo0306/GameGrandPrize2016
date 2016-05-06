@@ -23,7 +23,7 @@ public class Message : MonoBehaviour {
         if (_alpha < 0.0f)
             _changeSpeed = -_changeSpeed;
 
-        _alpha -= _changeSpeed;
+        _alpha -= _changeSpeed * Time.deltaTime * 10;
 
         //ここで色と透明度を更新
         this.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, _alpha);
