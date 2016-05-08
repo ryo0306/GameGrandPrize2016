@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 
 
-public class SceneChanger : MonoBehaviour
+public class SceneChanger : SingletonMonoBehaviour<SceneChanger>
 {
     //fadeさせるためのTexture
     private Texture2D _fadeTexture;
@@ -24,21 +24,30 @@ public class SceneChanger : MonoBehaviour
 
     void Awake()
     {
-        if (_instance == null)
+        if (this != Instance)
         {
-            DontDestroyOnLoad(gameObject);
-            _instance = gameObject;
+            Destroy(this);
+            return;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
+        DontDestroyOnLoad(this.gameObject);
 
         _fadeTexture = new Texture2D(32, 32, TextureFormat.RGB24, false);
         _fadeTexture.ReadPixels(new Rect(0, 0, 32, 32), 0, 0, false);
         _fadeTexture.SetPixel(0, 0, Color.white);
         _fadeTexture.Apply();
     }
+
+    public void OnGUI()
+    {
+        if (!this._isFading)
+            return;
+
+        //透明度を更新して黒テクスチャを描画
+        GUI.color = new Color(0, 0, 0, this._fadeAlpha);
+        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), this._fadeTexture);
+    }
+
 
     public void LoadLevel(string scene, float interval)
     {

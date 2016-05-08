@@ -7,36 +7,35 @@ using System.Collections;
 /// シーンの終了や操作できるかなど
 /// シーン全体のフラグを管理
 /// </summary>
-public class TitleRoot : MonoBehaviour {
-
-
+public class TitleRoot : MonoBehaviour
+{
     [SerializeField, Tooltip("Sceneがおわるかどうか")]
     public bool _sceneEnd = false;
 
     [SerializeField, Tooltip("操作できるかどうか")]
     public bool _operationPossible = true;
 
-    void Start () {
-	
-	}
-	
 
-	void Update () {
-	
-        if(_sceneEnd)
-        {
-            //ここでシーン切り替え
-        }
-	}
+    //Scene移行するときに全ての処理をしないようにする。
+    private bool _isEnd = false;
 
     /// <summary>
     /// 操作できるかどうか
     /// </summary>
     public bool CanPlay
     {
-        get{ return _operationPossible; }
+        get { return _operationPossible; }
 
-        set{ _operationPossible = value; }
+        set { _operationPossible = value; }
+    }
+
+    void Update()
+    {
+        if (!_sceneEnd) return;
+        if (_isEnd == true) return;
+        SceneChanger.Instance.LoadLevel("StageSelect", 1.0f);
+        Debug.Log("Hit");
+        _isEnd = true;
     }
     /// <summary>
     /// シーンがおわったかどうか
