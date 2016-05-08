@@ -9,16 +9,14 @@ public class FlyP : MonoBehaviour {
     [SerializeField, Tooltip("シーン全体のマネージャー")]
     private GameObject _sceneManager =  null;
 
-    [SerializeField, Range(0.00f, 1.00f), Tooltip("飛んでく速さ")]
-    public float _flySpeed = 0.0f;
+    
+    [SerializeField, Range(0.00f, 1.00f), Tooltip("Easingする速さ")]
+    public float _timeSpeed = 0.0f;
 
     private float _easeTime = 0.0f;
 
-    [SerializeField, Tooltip("飛んでいく目的地x")]
-    public float _destinationX = 0.0f;
-
-    [SerializeField, Tooltip("飛んでいく目的地y")]
-    public float _destinationY = 0.0f;
+    [SerializeField, Tooltip("飛んでいく目的地")]
+    public Vector2 _destination;
 
     private bool _start = false;
 
@@ -27,7 +25,7 @@ public class FlyP : MonoBehaviour {
 
 	void Start () {
         _startPosition = transform.position;
-        _destinationPosition =new Vector3(_destinationX, _destinationY, transform.position.z);
+        _destinationPosition =new Vector3(_destination.x, _destination.y, transform.position.z);
 	}
 	
 
@@ -36,12 +34,12 @@ public class FlyP : MonoBehaviour {
         Input();
         if (_start)
         {
-            _easeTime += _flySpeed;
+            _easeTime += _timeSpeed * Time.deltaTime * 30;
             transform.position = Vector3.Lerp(_startPosition, _destinationPosition, _easeTime);
 
             if (_easeTime >= 1.0f)
             {
-                _sceneManager.GetComponent<SceneManager>().SceneEnd();
+                _sceneManager.GetComponent<TitleRoot>().SceneEnd();
             }
         }
 	}
@@ -50,7 +48,7 @@ public class FlyP : MonoBehaviour {
         if (_wind.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
             _start = true;
-            _sceneManager.GetComponent<SceneManager>().CanPlay = false;
+            _sceneManager.GetComponent<TitleRoot>().CanPlay = false;
         }
     }
 }
