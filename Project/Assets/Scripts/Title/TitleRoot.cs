@@ -7,14 +7,14 @@ using System.Collections;
 /// シーンの終了や操作できるかなど
 /// シーン全体のフラグを管理
 /// </summary>
-public class SceneManager : MonoBehaviour {
+public class TitleRoot : MonoBehaviour {
 
 
     [SerializeField, Tooltip("Sceneがおわるかどうか")]
     public bool _sceneEnd = false;
 
     [SerializeField, Tooltip("操作できるかどうか")]
-    public bool _canPlay = true;
+    public bool _operationPossible = true;
 
     void Start () {
 	
@@ -34,9 +34,9 @@ public class SceneManager : MonoBehaviour {
     /// </summary>
     public bool CanPlay
     {
-        get{ return _canPlay; }
+        get{ return _operationPossible; }
 
-        set{ _canPlay = value; }
+        set{ _operationPossible = value; }
     }
     /// <summary>
     /// シーンがおわったかどうか

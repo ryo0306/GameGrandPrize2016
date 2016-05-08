@@ -26,7 +26,7 @@ public class SelectStage : MonoBehaviour
     {
         if (_wind.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
-            _sceneManager.GetComponent<SceneManager>().CanPlay = false;
+            _sceneManager.GetComponent<TitleRoot>().CanPlay = false;
         }
         //何かしらのアニメーションの後にSceneEndを呼び出して終わり
     }
