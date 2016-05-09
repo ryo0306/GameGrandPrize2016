@@ -22,7 +22,7 @@ public class TitleRoot : MonoBehaviour
     /// <summary>
     /// 操作できるかどうか
     /// </summary>
-    public bool CanPlay
+    public bool OperationPossible
     {
         get { return _operationPossible; }
 
@@ -40,8 +40,10 @@ public class TitleRoot : MonoBehaviour
     /// <summary>
     /// シーンがおわったかどうか
     /// </summary>
-    public void SceneEnd()
+    public bool SceneEnd
     {
-        _sceneEnd = true;
+        get{ return _sceneEnd; }
+
+        set{ _sceneEnd = value; }
     }
 }

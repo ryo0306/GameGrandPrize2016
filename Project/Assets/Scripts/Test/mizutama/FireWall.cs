@@ -3,6 +3,8 @@ using System.Collections;
 
 public class FireWall : MonoBehaviour
 {
+    [SerializeField, Tooltip("マイクの情報")]
+    private GameObject _mike = null;
 
     [SerializeField, Tooltip("火の本体,")]
     GameObject _fire = null;
@@ -11,27 +13,34 @@ public class FireWall : MonoBehaviour
     int _maxTouthCount = 1;
 
     
-    private int _touthCount = 0;                   // 何回叩いたか
+    private int _touthCount = 0;                   //何回消したか
 
     [SerializeField, Range(1f, 10f), Tooltip("何秒間火を消すかの最大時間")]
     float _maxWaitTimeOfReturn = 1f;
 
-    
+    [SerializeField, Range(0.0f, 1.0f), Tooltip("次の消化までの時間")]
+    public float _maxinterval = 0.0f;
+
+    private float _interval = 0.0f;
+        
     private float _waitTimeOfReturn = 0.0f;        // 火が消えている時間
 
 
     void Update()
     {
-        //あたり判定（レイキャスト）
-        if (Input.GetMouseButtonDown(0))
+        if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit = new RaycastHit();
-            if (!Physics.Raycast(ray, out hit)) return;
-            if (hit.collider.gameObject.name != transform.name) return;
-            DeleteFire();
+            _interval += Time.deltaTime;
+            Debug.Log(_interval);
         }
+        
         CountWaitTimeOfReturn();
+
+        if (_interval < _maxinterval) return;
+        _interval = 0.0f;
+        DeleteFire();
+        
+        
     }
 
     //復活する時間を測る

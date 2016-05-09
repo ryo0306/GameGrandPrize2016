@@ -13,24 +13,21 @@ public class WindMill : MonoBehaviour {
 
     [SerializeField, Tooltip("ゲートが開いてるか")]
     bool _open = false;
+    [SerializeField, Tooltip("マイクの情報")]
+    private GameObject _mike = null;
 
-	void Start () {
+    void Start () {
 	
 	}
-	
-	
-	void Update () {
 
-        //あたり判定（レイキャスト）
-        if (Input.GetMouseButtonDown(0))
+
+    void Update(){
+
+        if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit = new RaycastHit();
-            if (!Physics.Raycast(ray, out hit)) return;
-            if (hit.collider.gameObject.name != transform.name) return;
-            Debug.Log(transform.name);
             _open = !_open;
         }
+
     }
 
     public bool GetOpen()
