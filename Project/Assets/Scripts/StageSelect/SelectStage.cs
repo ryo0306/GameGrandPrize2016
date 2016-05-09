@@ -6,10 +6,10 @@ using System.Collections;
 /// </summary>
 public class SelectStage : MonoBehaviour
 {
-    [SerializeField, Tooltip("風の情報")]
-    private GameObject _wind = null;
+    [SerializeField, Tooltip("マイクの情報")]
+    private GameObject _mike = null;
     [SerializeField, Tooltip("シーン管理のマネージャー")]
-    private GameObject _sceneManager = null;
+    private GameObject _titleRoot = null;
   
 
     void Start()
@@ -24,10 +24,9 @@ public class SelectStage : MonoBehaviour
 
     void Input()
     {
-        if (_wind.GetComponent<MikeInput>().nowVolume >= 0.7f)
+        if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
-            _sceneManager.GetComponent<TitleRoot>().CanPlay = false;
+            _titleRoot.GetComponent<TitleRoot>().OperationPossible = false;
         }
-        //何かしらのアニメーションの後にSceneEndを呼び出して終わり
     }
 }

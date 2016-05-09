@@ -3,6 +3,9 @@ using System.Collections;
 
 public class MovePropeller : MonoBehaviour
 {
+    [SerializeField, Tooltip("マイクの情報")]
+    private GameObject _mike = null;
+
     [SerializeField, Range(0.0f, 5.0f), Tooltip("回転の最高速度,")]
     float _maxRotateSpeed = 0.5f;
 
@@ -17,12 +20,15 @@ public class MovePropeller : MonoBehaviour
 
     private float _waitTimeOfAcceleration = 0.0f;
 
-    [SerializeField, Range(1, 10), Tooltip("何回タッチしたら最低速度になるか,")]
+    [SerializeField, Range(1, 10), Tooltip("何回減速したら最低速度になるか")]
     int _maxtouthCount = 1;
-
     
-    private int _touthCount = 0;               //タッチの回数
+    private int _touthCount = 0;               //減速できる回数
 
+    [SerializeField, Range(0.0f, 1.0f), Tooltip("次減速できるまでの時間")]
+    public float _maxInterval = 0.0f;
+
+    private float _interval = 0.0f;
 
     void Start()
     {
@@ -32,18 +38,23 @@ public class MovePropeller : MonoBehaviour
     void FixedUpdate()
     {
 
-        //あたり判定（レイキャスト）
-        if (Input.GetMouseButtonDown(0))
+        if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit = new RaycastHit();
-            if (!Physics.Raycast(ray, out hit)) return;
-            if (hit.collider.gameObject.name != transform.name) return;
+            _interval += Time.deltaTime;
+            Debug.Log(_interval);
+        }
+
+        if (_interval >= _maxInterval)
+        {
+            Debug.Log("reset");
+            _interval = 0.0f;
             DeleyRotate();
         }
+
         CountAccelerationTime();
         transform.Rotate(new Vector3(0, 0, _rotateSpeed * Time.deltaTime * 100));
 
+        
     }
 
     //一定時間たったら加速する処理
