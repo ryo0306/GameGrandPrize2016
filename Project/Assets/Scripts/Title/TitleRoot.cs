@@ -38,7 +38,7 @@ public class TitleRoot : MonoBehaviour
         _isEnd = true;
     }
     /// <summary>
-    /// シーンwo
+    /// シーンがおわったかどうか
     /// </summary>
     public bool SceneEnd
     {
