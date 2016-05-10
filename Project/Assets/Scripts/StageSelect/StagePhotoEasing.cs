@@ -4,48 +4,46 @@ using System.Collections;
 
     public class StagePhotoEasing : MonoBehaviour
     {
-
+    [SerializeField, Tooltip("StagePhotoの状態")]
+    private GameObject _stagePhotoStatus = null;
         [SerializeField, Tooltip("左端の最大")]
         public float _leftMax;
         [SerializeField, Tooltip("右端の最大")]
         public float _rightMax;
-
+        [SerializeField, Tooltip("ステージセレクトの情報")]
+        private GameObject _selectStage = null;
 
         //Easing処理用の時間
-        float _animationTime;
+        
         //スライドする距離
         public float _range;
-        //現在slideしているかどうか
-        public bool _slide;
-        //スライドする方向
-        private float _direction;
         
         //スライド時の最初の位置
         private float _startPos;
 
         void Start()
         {
-            _animationTime = 0.0f;
             _startPos = transform.localPosition.x;
         }
 
         void Update()
         {
 
-            if (_slide)
-            {
-                _animationTime += 0.01f * Time.deltaTime * 100;
+        if (_stagePhotoStatus.GetComponent<StagePhotoStatus>().Slide)
+        {
 
-                transform.localPosition = new Vector3(EasingCircInOut(_animationTime, _startPos, _startPos + _range * _direction), transform.localPosition.y, transform.localPosition.z);
+            transform.localPosition = new Vector3(EasingCircInOut(_stagePhotoStatus.GetComponent<StagePhotoStatus>().EaseTime,
+                                                                  _startPos, _startPos + _range * _stagePhotoStatus.GetComponent<StagePhotoStatus>().Direction),
+                                                                  transform.localPosition.y, transform.localPosition.z);
 
-                if (_animationTime >= 1.0f)
-                {
-                    _animationTime = 0.0f;
-                    MoveLimit();
-                    _startPos = transform.localPosition.x;
-                    _slide = false;
-                }
-            }
+        }
+             if (_stagePhotoStatus.GetComponent<StagePhotoStatus>().EaseTime < 1.0f) return;
+                 
+             MoveLimit();
+             _startPos = transform.localPosition.x;
+             _stagePhotoStatus.GetComponent<StagePhotoStatus>().Slide = false;
+                
+            
 
         }
 
@@ -55,18 +53,6 @@ using System.Collections;
             if ((t /= 0.5f) < 1) return -(e - b) / 2 * (Mathf.Sqrt(1 - t * t) - 1) + b;
             t -= 2;
             return (e - b) / 2 * (Mathf.Sqrt(1 - t * t) + 1) + b;
-        }
-
-        public void RightSlideOn()
-        {
-            _slide = true;
-            _direction = 1.0f;
-        }
-
-        public void LeftSlideOn()
-        {
-            _slide = true;
-            _direction = -1.0f;
         }
 
         private void MoveLimit()

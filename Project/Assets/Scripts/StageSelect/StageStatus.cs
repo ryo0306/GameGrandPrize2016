@@ -5,9 +5,14 @@ public class StageStatus : MonoBehaviour
 {
 
     [SerializeField]
-    int _selectGameNum;
+    int _selectGameNum = 1;
 
     static GameObject _instance = null;
+
+    public void Start()
+    {
+        _selectGameNum = 1;
+    }
 
     public int SelectGameNum
     {
