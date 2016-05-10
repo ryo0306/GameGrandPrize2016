@@ -25,7 +25,7 @@ public class FlyP : MonoBehaviour {
 
 	void Start () {
         _startPosition = transform.position;
-        _destinationPosition = new Vector3(_destination.x, _destination.y, transform.position.z);
+        _destinationPosition = new Vector3(_destination.x, _destination.y, 0);
 	}
 	
 

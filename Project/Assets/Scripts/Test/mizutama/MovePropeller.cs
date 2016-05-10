@@ -74,11 +74,10 @@ public class MovePropeller : MonoBehaviour
 
 
 
-    //タッチしたら動きが遅くなる
+    //吹いたら動きが遅くなる
     private void DeleyRotate()
     {
         
-        //規定のタッチしたら最低速度になるように処理
         if (_touthCount >= _maxtouthCount) return;
         ++_touthCount;
         _rotateSpeed -= (_maxRotateSpeed - _minRotateSpeed) / _maxtouthCount;
