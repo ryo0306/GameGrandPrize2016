@@ -34,6 +34,8 @@ public class PlayerMove : MonoBehaviour
     //到達していないノードの数
     private int _listLength = 0;
 
+    private int _nextNodeID = 0;
+
     //一つ前のノードの位置
     private Vector3 _startPosition = Vector3.zero;
 
@@ -48,6 +50,9 @@ public class PlayerMove : MonoBehaviour
     //ゴールしているか
     private bool _isGoal = false;
 
+    //
+    private List<GameObject> clones = new List<GameObject>();
+    
     //最初のノードの位置をプレイヤーの初期位置に設定する
     void Start()
     {
@@ -62,23 +67,28 @@ public class PlayerMove : MonoBehaviour
         //今のリストの長さを調べる
         _listLength = _nodePosition.Count;
         
-
         if (_updateCount == _nodeSetTiming)
         {
             if (Input.GetMouseButton(0))
             {
-               // Debug.Log(_marker.transform.position);
-                
                 //今のマーカーの位置にノードを配置
                 _nodePosition.Add(_marker.transform.position);
-                
+
                 //DEBUG:確認用に点を置いていく
-                Instantiate(_node, _nodePosition[_listLength], Quaternion.identity);
+                clones.Add(Instantiate(_node, _nodePosition[_listLength], Quaternion.identity) as GameObject);
+            }
+
+            if (_listLength > 0)
+            {
+                _startPosition = transform.position;
+
+                SetTarget();
             }
 
             _updateCount = 0;
+            Debug.Log(_listLength);
         }
-        
+
 
         if (_isSetTarget)
         {
@@ -107,13 +117,16 @@ public class PlayerMove : MonoBehaviour
                 SetTarget();
             }
 
-            if (_rate > 1)
+            if (_rate > 1 && _isSetTarget)
             {
                 //移動前の位置を記憶
                 _startPosition = transform.position;
 
-                //前のノードを消去
-                _nodePosition.RemoveAt(0);
+                if (_nodePosition.Count >= 1)
+                {
+                    //前のノードを消去
+                    _nodePosition.RemoveAt(_nextNodeID);
+                }
 
                 while (_nodePosition.Count >= 1)
                 {
@@ -151,28 +164,48 @@ public class PlayerMove : MonoBehaviour
 
     float CalcAngle()
     {
-        float dx = _nodePosition[0].x - this.transform.position.x;
-        float dy = _nodePosition[0].y - this.transform.position.y;
+        float dx = _nodePosition[_nextNodeID].x - this.transform.position.x;
+        float dy = _nodePosition[_nextNodeID].y - this.transform.position.y;
         return Mathf.Abs(Mathf.Atan2(dy, dx) / Mathf.PI);
+    }
+
+    int CheckNearNodeID()
+    {
+        int _id = 0;
+
+        float _distance = 1000;
+
+        for(int i = 0; i < _nodePosition.Count; i++)
+        {
+            float dis = Vector3.Distance(this.transform.position, _nodePosition[i]);
+            if(_distance > dis)
+            {
+                _distance = dis;
+                _id = i;
+            }
+        }
+
+        return _id;
     }
 
     void SetTarget()
     {
+        _nextNodeID = CheckNearNodeID();
         //進行方向±45度の範囲内にあるノードをターゲットにセットする
         if (CalcAngle() < 0.25f)
         {
             //移動先の位置を記憶
-            _targetPosition = _nodePosition[0];
+            _targetPosition = _nodePosition[_nextNodeID];
 
             _rate = 0;
 
             _isSetTarget = true;
         }
-        else
-        {
-            //範囲外のノードは消去
-            _nodePosition.RemoveAt(0);
-        }
+//        else
+//        {
+//            //範囲外のノードは消去
+//            _nodePosition.RemoveAt(_nextNodeID);
+//        }
     }
 
     void OnTriggerEnter(Collider col)
@@ -183,7 +216,7 @@ public class PlayerMove : MonoBehaviour
             _respawnPosition = col.transform.position;
         }
         //チェックポイント以外のとき
-        else
+        else if(col.gameObject.tag != "Node")
         {
             //今登録されているノードをリセット
             while (_nodePosition.Count > 0)
@@ -197,6 +230,11 @@ public class PlayerMove : MonoBehaviour
 
             //リスポーン地点に移動
             transform.position = _respawnPosition;
+
+            foreach (var clone in clones)
+            {
+                Destroy(clone);
+            }
         }
     }
 }
