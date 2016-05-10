@@ -158,8 +158,6 @@ public class PlayerMove : MonoBehaviour
 
     void SetTarget()
     {
-        float dis = Vector3.Distance(this.transform.position, _nodePosition[0]);
-
         //進行方向±45度の範囲内にあるノードをターゲットにセットする
         if (CalcAngle() < 0.25f)
         {
@@ -170,7 +168,11 @@ public class PlayerMove : MonoBehaviour
 
             _isSetTarget = true;
         }
-        //Debug.Log(CalcAngle() +"," +dis);
+        else
+        {
+            //範囲外のノードは消去
+            _nodePosition.RemoveAt(0);
+        }
     }
 
     void OnTriggerEnter(Collider col)
