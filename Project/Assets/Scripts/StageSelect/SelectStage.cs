@@ -8,8 +8,7 @@ public class SelectStage : MonoBehaviour
 {
     [SerializeField, Tooltip("マイクの情報")]
     private GameObject _mike = null;
-    [SerializeField, Tooltip("シーン管理のマネージャー")]
-    private GameObject _titleRoot = null;
+
   
 
     void Start()
@@ -26,7 +25,7 @@ public class SelectStage : MonoBehaviour
     {
         if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
         {
-            _titleRoot.GetComponent<TitleRoot>().OperationPossible = false;
+
         }
     }
 }
