@@ -62,7 +62,7 @@ public class FireWall : MonoBehaviour
     }
 
 
-    //何回かタッチしたら消える
+    //何回か吹いたら消える
     private void DeleteFire()
     {
         if (!_fire.activeInHierarchy) return;
