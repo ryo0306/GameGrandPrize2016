@@ -16,6 +16,8 @@ public class WindMill : MonoBehaviour {
     [SerializeField, Tooltip("マイクの情報")]
     private GameObject _mike = null;
 
+    private bool _isOpening = false;
+
     void Start () {
 	
 	}
@@ -23,15 +25,22 @@ public class WindMill : MonoBehaviour {
 
     void Update(){
 
-        if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
-        {
+        if (_isOpening) return;
+        if (_mike.GetComponent<MikeInput>().nowVolume < 0.7f) return;
             _open = !_open;
-        }
+            _isOpening = true;
+        
 
     }
 
     public bool GetOpen()
     {
         return _open;
+    }
+    
+    public bool IsOpenig
+    {
+        get { return _isOpening; }
+        set { _isOpening = value; }
     } 
 }
