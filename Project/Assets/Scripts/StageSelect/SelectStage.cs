@@ -7,9 +7,10 @@ using System.Collections;
 public class SelectStage : MonoBehaviour
 {
     [SerializeField, Tooltip("マイクの情報")]
+
     private GameObject _mike = null;
 
-  
+    private bool _isEnd = false;
 
     void Start()
     {
@@ -18,14 +19,17 @@ public class SelectStage : MonoBehaviour
 
     void Update()
     {
-        
+
+
+        IsEnd();
     }
 
-    void Input()
+    void IsEnd()
     {
-        if (_mike.GetComponent<MikeInput>().nowVolume >= 0.7f)
-        {
-
-        }
+        if (_mike.GetComponent<MikeInput>().nowVolume < 0.7f) return;
+        if (_isEnd == true) return;
+            SceneChanger.Instance.LoadLevel("Title", 1.0f);
+        _isEnd = true;
     }
+
 }
