@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,6 +23,9 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField,Tooltip("登録されたオブジェクトより右に行くとゴール")]
     private GameObject _goalLine = null;
+
+    [SerializeField, Tooltip("ゴールしたときに文字を表示する")]
+    private Text goalText = null;
 
     //まだ到達していないノードのlist
     private List<Vector3> _nodePosition = new List<Vector3>();
@@ -47,15 +51,26 @@ public class PlayerMove : MonoBehaviour
 
     private float _rate = 0;
 
-    //ゴールしているか
-    private bool _isGoal = false;
+    //データを保存しておくためのオブジェクト
+    private GameObject _dataManager = null;
 
-    //
+    //ゴールしているか
+    public bool _isGoal = false;
+
     private List<GameObject> clones = new List<GameObject>();
     
     //最初のノードの位置をプレイヤーの初期位置に設定する
     void Start()
     {
+        if((_dataManager = GameObject.Find("DataManager")) == null)
+        {
+            Debug.Log("DataManagerが見つかりません");
+        }
+        else
+        {
+            _dataManager.GetComponent<Score>().Reset();
+        }
+        
         _respawnPosition = transform.position;
         _startPosition = _respawnPosition;
     }
@@ -85,8 +100,16 @@ public class PlayerMove : MonoBehaviour
                 SetTarget();
             }
 
+            for (int cloneID=0; cloneID<clones.Count ; cloneID++)
+            {
+                if (clones[cloneID].transform.position.x < transform.position.x)
+                {
+                    Destroy(clones[cloneID]);
+                    clones.RemoveAt(cloneID);
+                }
+            }
+
             _updateCount = 0;
-            Debug.Log(_listLength);
         }
 
 
@@ -150,7 +173,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         //ゴールオブジェクトより奥に行っていたらフラグをtrue
-        if(_goalLine.transform.position.x < transform.position.x)
+        if((_goalLine.transform.position.x < transform.position.x)&& !_isGoal)
         {
             _isGoal = true;
         }
@@ -158,7 +181,9 @@ public class PlayerMove : MonoBehaviour
         //DEBUG:ゴールしていたらコンソールに文字表示
         if (_isGoal)
         {
-            Debug.Log("GOAL");
+            goalText.text = "GOAL";
+	//Sampleのところに次のシーンの名前を入れてください
+            SceneChanger.Instance.LoadLevel("Sample", 1.0f);
         }
     }
 
@@ -215,9 +240,11 @@ public class PlayerMove : MonoBehaviour
         {
             _respawnPosition = col.transform.position;
         }
+        
         //チェックポイント以外のとき
-        else if(col.gameObject.tag != "Node")
+        else
         {
+            _dataManager.GetComponent<Score>().AddCount();
             //今登録されているノードをリセット
             while (_nodePosition.Count > 0)
             {
@@ -235,6 +262,11 @@ public class PlayerMove : MonoBehaviour
             {
                 Destroy(clone);
             }
+
+            while (clones.Count > 0) {
+                clones.RemoveAt(0);
+            }
+
         }
     }
 }
