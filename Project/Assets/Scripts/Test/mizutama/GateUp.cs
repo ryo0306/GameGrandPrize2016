@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class GateUp : MonoBehaviour {
 
     [SerializeField, Tooltip("スイッチの本体")]
@@ -22,12 +23,24 @@ public class GateUp : MonoBehaviour {
 	void Update () {
         //開閉処理
         if (!_windMill.GetComponent<WindMill>().GetOpen())
-            if (transform.position.y < _maxPosition)
+            if (transform.position.y <= _maxPosition)
+            {
                 transform.position += new Vector3(0, _openSpeed, 0);
+            }
+            else
+            {
+                _windMill.GetComponent<WindMill>().IsOpenig = false;
+            }
 
         if (_windMill.GetComponent<WindMill>().GetOpen())
-            if (transform.position.y > _minPosition)
+            if (transform.position.y >= _minPosition)
+            {
                 transform.position -= new Vector3(0, _openSpeed, 0);
+            }
+            else
+            {
+                _windMill.GetComponent<WindMill>().IsOpenig = false;
+            }
 
 	}
 }

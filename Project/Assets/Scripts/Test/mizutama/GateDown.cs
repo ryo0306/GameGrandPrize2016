@@ -24,7 +24,7 @@ public class GateDown : MonoBehaviour {
         //開閉処理
         if (_windMill.GetComponent<WindMill>().GetOpen())
         {
-            if (transform.position.y < _maxPosition)
+            if (transform.position.y <= _maxPosition)
             {
                 transform.position += new Vector3(0, _openSpeed, 0);
             }
@@ -35,7 +35,7 @@ public class GateDown : MonoBehaviour {
         }
         if (!_windMill.GetComponent<WindMill>().GetOpen())
         {
-            if (transform.position.y > _minPosition)
+            if (transform.position.y >= _minPosition)
             {
                 transform.position -= new Vector3(0, _openSpeed, 0);
             }
