@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NextSceneSample : MonoBehaviour {
+public class NextSceneSample : MonoBehaviour
+{
 
     private GameObject _dataManager = null;
 

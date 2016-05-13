@@ -57,6 +57,10 @@ public class PlayerMove : MonoBehaviour
     //ゴールしているか
     public bool _isGoal = false;
 
+    //Sceneが終わっているかどうか
+    //true->全ての処理をしない
+    private bool _isEnd = false;
+
     private List<GameObject> clones = new List<GameObject>();
     
     //最初のノードの位置をプレイヤーの初期位置に設定する
@@ -182,8 +186,10 @@ public class PlayerMove : MonoBehaviour
         if (_isGoal)
         {
             goalText.text = "GOAL";
-	//Sampleのところに次のシーンの名前を入れてください
-            SceneChanger.Instance.LoadLevel("Sample", 1.0f);
+            //Sampleのところに次のシーンの名前を入れてください
+            if (_isEnd == true) return;
+            SceneChanger.Instance.LoadLevel("Title", 1.0f);
+            _isEnd = true;
         }
     }
 

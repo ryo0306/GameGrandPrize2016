@@ -17,7 +17,24 @@ using System.Collections;
     _dataManager.GetComponent<Score>().AddCount();
 */
 
-public class Score : MonoBehaviour {
+public class Score : MonoBehaviour
+{
+
+    static GameObject _instance = null;
+
+    void Awake()
+    {
+        if (_instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            _instance = gameObject;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     //リトライ回数
     private static int _retryCount = 0;
 
