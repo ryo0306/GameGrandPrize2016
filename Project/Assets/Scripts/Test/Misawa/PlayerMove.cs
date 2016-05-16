@@ -15,17 +15,23 @@ public class PlayerMove : MonoBehaviour
     [SerializeField, Tooltip("ノードを置く位置を表示するマーカー")]
     private GameObject _marker = null;
 
+    [SerializeField, Tooltip("マイク")]
+    private GameObject _mike = null;
+
     [SerializeField, Range(1, 10), Tooltip("ノードを置く間隔")]
     private int _nodeSetTiming = 1;
 
     [SerializeField, Range(0.1f, 5.0f), Tooltip("移動速度")]
     private float _speed = 0.5f;
 
+//    [SerializeField, Range(0.1f, 5.0f), Tooltip("マイクで速度")]
+//    private float _maxSpeed = 1.0f;
+
     [SerializeField,Tooltip("登録されたオブジェクトより右に行くとゴール")]
     private GameObject _goalLine = null;
 
     [SerializeField, Tooltip("ゴールしたときに文字を表示する")]
-    private Text goalText = null;
+    private Text _goalText = null;
 
     //まだ到達していないノードのlist
     private List<Vector3> _nodePosition = new List<Vector3>();
@@ -124,13 +130,13 @@ public class PlayerMove : MonoBehaviour
             //前のノードとプレイヤーの距離
             float diff = Vector3.Distance(gameObject.transform.position, _startPosition);
 
-            _rate = (diff + _speed / 10) / dis;
+            _rate = (diff + (_speed + _mike.GetComponent<MikeInput>().nowVolume) / 10) / dis;
 
             transform.position = Vector3.Lerp(_startPosition, _targetPosition, _rate);
         }
         else
         {
-            transform.position += new Vector3(_speed / 10f, -0.05f, 0);
+            transform.position += new Vector3((_speed + _mike.GetComponent<MikeInput>().nowVolume) / 10f, -0.05f, 0);
         }
 
 
@@ -185,7 +191,7 @@ public class PlayerMove : MonoBehaviour
         //DEBUG:ゴールしていたらコンソールに文字表示
         if (_isGoal)
         {
-            goalText.text = "GOAL";
+            _goalText.text = "GOAL";
             //Sampleのところに次のシーンの名前を入れてください
             if (_isEnd == true) return;
             SceneChanger.Instance.LoadLevel("Title", 1.0f);
