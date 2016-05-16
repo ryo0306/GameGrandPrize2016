@@ -24,8 +24,9 @@ public class PlayerMove : MonoBehaviour
     [SerializeField, Range(0.1f, 5.0f), Tooltip("移動速度")]
     private float _speed = 0.5f;
 
-//    [SerializeField, Range(0.1f, 5.0f), Tooltip("マイクで速度")]
-//    private float _maxSpeed = 1.0f;
+    //実際の速度　=　_speed + _speed * _accelerationRate * nowVolume
+    [SerializeField, Range(2.0f, 10.0f), Tooltip("風を1.0受けたときに移動速度が何倍になるか")]
+    private float _accelerationRate = 2.0f;
 
     [SerializeField,Tooltip("登録されたオブジェクトより右に行くとゴール")]
     private GameObject _goalLine = null;
@@ -85,6 +86,28 @@ public class PlayerMove : MonoBehaviour
         _startPosition = _respawnPosition;
     }
 
+    void Update()
+    {
+        float _nowSpeed = _speed + _speed * _accelerationRate * _mike.GetComponent<MikeInput>().nowVolume;
+        if (_isSetTarget)
+        {
+            //ノード間の距離
+            float dis = Vector3.Distance(_startPosition, _targetPosition);
+            //前のノードとプレイヤーの距離
+            float diff = Vector3.Distance(gameObject.transform.position, _startPosition);
+
+            _rate = (diff + _nowSpeed / 10) / dis;
+
+            transform.position = Vector3.Lerp(_startPosition, _targetPosition, _rate);
+        }
+        else
+        {
+            transform.position += new Vector3(_nowSpeed / 10f, -0.05f, 0);
+        }
+
+        Debug.Log(_nowSpeed);
+    }
+    
     void FixedUpdate()
     {
         _updateCount++;
@@ -121,24 +144,6 @@ public class PlayerMove : MonoBehaviour
 
             _updateCount = 0;
         }
-
-
-        if (_isSetTarget)
-        {
-            //ノード間の距離
-            float dis = Vector3.Distance(_startPosition, _targetPosition);
-            //前のノードとプレイヤーの距離
-            float diff = Vector3.Distance(gameObject.transform.position, _startPosition);
-
-            _rate = (diff + (_speed + _mike.GetComponent<MikeInput>().nowVolume) / 10) / dis;
-
-            transform.position = Vector3.Lerp(_startPosition, _targetPosition, _rate);
-        }
-        else
-        {
-            transform.position += new Vector3((_speed + _mike.GetComponent<MikeInput>().nowVolume) / 10f, -0.05f, 0);
-        }
-
 
         if (_listLength >= 1)
         {
@@ -238,11 +243,6 @@ public class PlayerMove : MonoBehaviour
 
             _isSetTarget = true;
         }
-//        else
-//        {
-//            //範囲外のノードは消去
-//            _nodePosition.RemoveAt(_nextNodeID);
-//        }
     }
 
     void OnTriggerEnter(Collider col)
