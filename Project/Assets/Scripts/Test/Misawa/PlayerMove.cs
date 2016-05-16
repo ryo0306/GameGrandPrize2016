@@ -86,6 +86,28 @@ public class PlayerMove : MonoBehaviour
         _startPosition = _respawnPosition;
     }
 
+    void Update()
+    {
+        float _nowSpeed = _speed + _speed * _accelerationRate * _mike.GetComponent<MikeInput>().nowVolume;
+        if (_isSetTarget)
+        {
+            //ノード間の距離
+            float dis = Vector3.Distance(_startPosition, _targetPosition);
+            //前のノードとプレイヤーの距離
+            float diff = Vector3.Distance(gameObject.transform.position, _startPosition);
+
+            _rate = (diff + _nowSpeed / 10) / dis;
+
+            transform.position = Vector3.Lerp(_startPosition, _targetPosition, _rate);
+        }
+        else
+        {
+            transform.position += new Vector3(_nowSpeed / 10f, -0.05f, 0);
+        }
+
+        Debug.Log(_nowSpeed);
+    }
+    
     void FixedUpdate()
     {
         _updateCount++;
@@ -122,25 +144,6 @@ public class PlayerMove : MonoBehaviour
 
             _updateCount = 0;
         }
-
-        float _nowSpeed = _speed + _speed * _accelerationRate * _mike.GetComponent<MikeInput>().nowVolume;
-        if (_isSetTarget)
-        {
-            //ノード間の距離
-            float dis = Vector3.Distance(_startPosition, _targetPosition);
-            //前のノードとプレイヤーの距離
-            float diff = Vector3.Distance(gameObject.transform.position, _startPosition);
-
-            _rate = (diff + _nowSpeed / 10) / dis;
-            
-            transform.position = Vector3.Lerp(_startPosition, _targetPosition, _rate);
-        }
-        else
-        {
-            transform.position += new Vector3(_nowSpeed / 10f, -0.05f, 0);
-        }
-
-        Debug.Log(_nowSpeed);
 
         if (_listLength >= 1)
         {
